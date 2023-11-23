@@ -1,5 +1,5 @@
 # TelescopeMount
-A Repo for my dad and his telescope mount
+A Repo for my father and his telescope mount
 
 ---
 
