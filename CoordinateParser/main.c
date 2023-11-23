@@ -6,6 +6,8 @@
 #include <termios.h>
 #include <ctype.h>
 
+// *************************************************************************************************************
+
 #define MAX_FIELDS 15
 #define MAX_LINES 22436
 
@@ -21,6 +23,15 @@
 #define OBJ_COO_DESIGN_START 9
 #define OBJ_COO_DESIGN_LENGTH 6
 
+// *************************************************************************************************************
+
+/**
+ * @brief A helper function for CVS Parser
+ *
+ * @param line
+ * @param fields
+ * @param max_fields
+ */
 void parse_csv_line(char *line, char *fields[], int max_fields)
 {
     char *token;
@@ -37,6 +48,11 @@ void parse_csv_line(char *line, char *fields[], int max_fields)
     fields[i] = NULL;
 }
 
+/**
+ * @brief A helper function for CVS Parser
+ *
+ * @param csv_data
+ */
 void free_csv_data(char *csv_data[MAX_LINES][MAX_FIELDS])
 {
     for (int i = 0; i < MAX_LINES; i++)
@@ -48,6 +64,12 @@ void free_csv_data(char *csv_data[MAX_LINES][MAX_FIELDS])
     }
 }
 
+/**
+ * @brief Parse the coordinates from the provided file
+ *
+ * @param file The datafile (must be a cvs syntax file)
+ * @param data Pointer to the 2D array that will contain the cvs data
+ */
 void parse_coordinates(FILE *file, char *data[MAX_LINES][MAX_FIELDS])
 {
     // Initialize csv_data array
@@ -83,6 +105,13 @@ void parse_coordinates(FILE *file, char *data[MAX_LINES][MAX_FIELDS])
     }
 }
 
+/**
+ * @brief functional replace a char with a nother
+ *
+ * @param str Ponter to the string
+ * @param target the char that will be replaced
+ * @param replacement the char with the replacement
+ */
 void replaceChar(char *str, char target, char replacement)
 {
     for (size_t i = 0; i < strlen(str); i++)
@@ -94,6 +123,11 @@ void replaceChar(char *str, char target, char replacement)
     }
 }
 
+/**
+ * @brief Shortens a number of degrees if it is greater than 180
+ *
+ * @param diff Pointer to the currnet degree
+ */
 void adjustDegrees(double *diff)
 {
     int diffSign = (*diff > 0) - (*diff < 0);
@@ -108,6 +142,12 @@ void adjustDegrees(double *diff)
     *diff = diffAbs * diffSign;
 }
 
+/**
+ * @brief Forces user input to a specific string input
+ *
+ * @param buffer Pointer that should hold the response as string
+ * @param quest the prompt
+ */
 void promptStr(char *buffer, char quest[])
 {
     printf("%s", quest);
@@ -120,6 +160,12 @@ void promptStr(char *buffer, char quest[])
     }
 }
 
+/**
+ * @brief Forces user input to a specific int input
+ *
+ * @param buffer Pointer that should hold the response as integer
+ * @param quest the prompt
+ */
 void promptInt(int *number, char quest[])
 {
     {
@@ -131,6 +177,11 @@ void promptInt(int *number, char quest[])
     }
 }
 
+/**
+ * @brief functional changes all uppercase chars to lowercase ones
+ *
+ * @param str Pointer to the string representation
+ */
 void stringToLower(char *str)
 {
     for (int i = 0; str[i] != '\0'; i++)
@@ -139,6 +190,13 @@ void stringToLower(char *str)
     }
 }
 
+/**
+ * @brief !SPECIFIC! Find the CVS Data in a 2D array
+ *
+ * @param csv_data The CVS Data
+ * @param object The object that needs to be found
+ * @return int - if successful 0, otherwise -1
+ */
 int findIn2D(char *csv_data[MAX_LINES][MAX_FIELDS], char object[])
 {
     stringToLower(object);
@@ -216,6 +274,18 @@ int findIn2D(char *csv_data[MAX_LINES][MAX_FIELDS], char object[])
     return foundedAt[selectedIndex - 1] - 1;
 }
 
+/**
+ * @brief Analyze the user input that leads to the objects to be searched
+ *
+ * @param argc (main) argc
+ * @param argv (main) argv
+ * @param csv_data The CVS Data
+ * @param objA_name Pointer (empty string)
+ * @param objB_name Pointer (empty string)
+ * @param objA_index Pointer (empty int)
+ * @param objB_index Pointer (empty int)
+ * @return int - if successful 0, otherwise -1
+ */
 int parseUserInput(int argc, char *argv[], char *csv_data[MAX_LINES][MAX_FIELDS], char *objA_name, char *objB_name, int *objA_index, int *objB_index)
 {
     if (argc < 2)
@@ -277,6 +347,8 @@ int parseUserInput(int argc, char *argv[], char *csv_data[MAX_LINES][MAX_FIELDS]
 
     return 0;
 }
+
+// *************************************************************************************************************
 
 int main(int argc, char *argv[])
 {
@@ -428,3 +500,5 @@ int main(int argc, char *argv[])
 
     return 0;
 }
+
+// *************************************************************************************************************
