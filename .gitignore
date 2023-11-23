@@ -9,7 +9,10 @@ bin/
 *.dylib
 
 # Ignore Visual Studio Code configuration files
-.vscode/
+*.vscode/
+
+# Ignore IDEA configuration files
+*.idea/
 
 # Ignore CMake build directory
 CMakeFiles/
