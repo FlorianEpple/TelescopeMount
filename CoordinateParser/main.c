@@ -1,3 +1,14 @@
+/**
+ * @file main.c
+ * @author Florian Epple
+ * @brief Parse Coordinates from data file and clalc differences
+ * @version 0.1
+ * @date 2023-11-24
+ *
+ * @copyright Copyright (c) 2023
+ *
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
