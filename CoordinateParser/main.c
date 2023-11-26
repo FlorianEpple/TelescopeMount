@@ -16,6 +16,7 @@
 #include <fcntl.h>
 #include <termios.h>
 #include <ctype.h>
+#include <time.h>
 
 // *************************************************************************************************************
 
@@ -290,7 +291,7 @@ int parseUserInput(int argc, char *argv[], char *csv_data[MAX_LINES][MAX_FIELDS]
     {
         while (1)
         {
-            promptStr(objA_name, "Enter the first Object  |> ");
+            promptStr(objA_name, " Enter the first Object  |> ");
             if (strlen(objA_name) > 1)
             {
                 break;
@@ -305,7 +306,7 @@ int parseUserInput(int argc, char *argv[], char *csv_data[MAX_LINES][MAX_FIELDS]
 
         while (1)
         {
-            promptStr(objB_name, "Enter the second Object |> ");
+            promptStr(objB_name, " Enter the second Object |> ");
             if (strlen(objB_name) > 1)
             {
                 break;
@@ -392,6 +393,21 @@ int main(int argc, char *argv[])
 
     int objA_index = -1;
     int objB_index = -1;
+
+    ////////////////////////////////
+    time_t currentTime;
+    time(&currentTime);
+
+    char *dateTimeString = ctime(&currentTime);
+
+    if (strlen(dateTimeString) > 0 && dateTimeString[strlen(dateTimeString) - 1] == '\n')
+    {
+        dateTimeString[strlen(dateTimeString) - 1] = '\0';
+    }
+
+    printf("\n==== %s ====\n", dateTimeString);
+
+    ////////////////////////////////
 
     if (parseUserInput(argc, argv, csv_data, objA_name, objB_name, &objA_index, &objB_index) > 0)
     {
@@ -481,13 +497,22 @@ int main(int argc, char *argv[])
     //----------------------------------------------------------------
     ////////////////////////////////    Send the output:
     //----------------------------------------------------------------
-    printf("\n  -> Send output \"%s\"\n\n", output);
 
-    /*
-     *
-     * Print the output serial...
-     *
-     */
+    int dessicion;
+
+    printf("\n Should the string \"%s\" be sent out to the Arduino?\n", output); // ask if the string should be sent out to the Arduino
+    promptInt(&dessicion, " (1=yes, else=no) -> ");
+
+    if (dessicion == 1) // send the string to the Arduino if dessicion is 1
+    {
+        printf("\n  -> Send output \"%s\"\n", output);
+
+        /*
+         *
+         * Print the output serial...
+         *
+         */
+    }
 
     //----------------------------------------------------------------
     ////////////////////////////////
@@ -495,6 +520,8 @@ int main(int argc, char *argv[])
 
     // Free allocated memory
     free_csv_data(csv_data);
+
+    printf("==================================\n\n");
 
     return 0;
 }
