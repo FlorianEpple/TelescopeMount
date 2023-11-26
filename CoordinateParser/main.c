@@ -19,20 +19,7 @@
 
 // *************************************************************************************************************
 
-#define MAX_FIELDS 15
-#define MAX_LINES 22436
-
-#define OBJ_COO_RH 0
-#define OBJ_COO_RM 1
-#define OBJ_COO_RS 2
-#define OBJ_COO_RA 3
-#define OBJ_COO_V 4
-#define OBJ_COO_DG 5
-#define OBJ_COO_DM 6
-#define OBJ_COO_DS 7
-#define OBJ_COO_DELTA 8
-#define OBJ_COO_DESIGN_START 9
-#define OBJ_COO_DESIGN_LENGTH 6
+#include "config/defines.c"
 
 // *************************************************************************************************************
 
