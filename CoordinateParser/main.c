@@ -9,12 +9,16 @@
  *
  */
 
+#ifdef _WIN32
+#include <windows.h>
+#elif defined(__APPLE__)
+#include <unistd.h>
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
 #include <fcntl.h>
-#include <termios.h>
 #include <ctype.h>
 #include <time.h>
 
@@ -363,11 +367,28 @@ int main(int argc, char *argv[])
     ////////////////////////////////
     // Get the current working directory
     char cwd[1024];
-    if (getcwd(cwd, sizeof(cwd)) == NULL)
+
+#ifdef _WIN32
+    if (GetCurrentDirectory(MAX_PATH, cwd) != 0)
     {
-        perror("getcwd() error");
+        printf("Current working directory: %s\n", cwd);
+    }
+    else
+    {
+        perror("Error getting current working directory");
         return 1;
     }
+#elif defined(__APPLE__)
+    if (getcwd(cwd, sizeof(cwd)) != NULL)
+    {
+        printf("Current working directory: %s\n", cwd);
+    }
+    else
+    {
+        perror("Error getting current working directory");
+        return 1;
+    }
+#endif
 
     ////////////////////////////////
     // Open the CSV file
