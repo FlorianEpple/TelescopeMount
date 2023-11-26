@@ -481,13 +481,22 @@ int main(int argc, char *argv[])
     //----------------------------------------------------------------
     ////////////////////////////////    Send the output:
     //----------------------------------------------------------------
-    printf("\n  -> Send output \"%s\"\n\n", output);
 
-    /*
-     *
-     * Print the output serial...
-     *
-     */
+    int dessicion;
+
+    printf("\nShould the string \"%s\" be sent out to the Arduino?\n", output); // ask if the string should be sent out to the Arduino
+    promptInt(&dessicion, "(1=yes, else=no) -> ");
+
+    if (dessicion == 1) // send the string to the Arduino if dessicion is 1
+    {
+        printf("\n  -> Send output \"%s\"\n\n", output);
+
+        /*
+         *
+         * Print the output serial...
+         *
+         */
+    }
 
     //----------------------------------------------------------------
     ////////////////////////////////
