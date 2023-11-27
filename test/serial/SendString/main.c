@@ -1,14 +1,21 @@
 #include <stdio.h>
 #include <string.h>
+
+#define BAUD_RATE 1000000
+
 #ifdef _WIN32
 #include <windows.h>
 
 int main()
 {
     // Get user input for the COM port
-    char comPort[10];
+    char comPortUIn[100];
+    char comPort[100];
     printf("Enter COM port (e.g., COM3): ");
     scanf("%s", comPort);
+
+    sprintf(comPort, "\\\\.\\%s", comPortUIn);
+    printf("%s\n", comPort);
 
     HANDLE hSerial;
     DCB dcbSerialParams = {0};
@@ -32,7 +39,7 @@ int main()
         return 1;
     }
 
-    dcbSerialParams.BaudRate = CBR_9600;   // Set your baud rate
+    dcbSerialParams.BaudRate = BAUD_RATE;  // Set your baud rate
     dcbSerialParams.ByteSize = 8;          // 8 data bits
     dcbSerialParams.StopBits = ONESTOPBIT; // 1 stop bit
     dcbSerialParams.Parity = NOPARITY;     // No parity

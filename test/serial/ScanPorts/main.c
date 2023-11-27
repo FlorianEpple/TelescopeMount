@@ -35,8 +35,7 @@ void listSerialPorts()
     {
         while ((entry = readdir(dir)) != NULL)
         {
-            printf("Scanning at /dev/%s\n", entry->d_name);
-            if (strncmp(entry->d_name, "ttyUSB", 6) == 0 || strncmp(entry->d_name, "ttyACM", 6) == 0)
+            if (strncmp(entry->d_name, "cu.usbserial", 12) == 0)
             {
                 printf("Arduino is connected to port: /dev/%s\n", entry->d_name);
                 return;
