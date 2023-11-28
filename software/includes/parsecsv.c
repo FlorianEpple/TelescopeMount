@@ -7,6 +7,7 @@
 #include <ctype.h>
 
 #include "functionals.c"
+#include "env.c"
 
 int csv_countfields(char line[])
 {
@@ -30,13 +31,18 @@ void csv_parsefields(char *buffer, char (*fields)[], int fieldn, int charlen)
     fnc_strsplitby(buffer, ';', fields, fieldn, charlen);
 }
 
-int csv_scanfor(FILE *source, int from_field, int to_field, char str[])
+int csv_scanfor(char filename[], int from_field, int to_field, char str[])
 {
     fnc_strtolower(str);
+
+    FILE *source;
+    source = fopen(filename, "r");
 
     if (source == NULL)
     {
         printf("Cant access csv source: csv_scanfor");
+
+        fclose(source);
         return -1;
     }
 
@@ -45,19 +51,15 @@ int csv_scanfor(FILE *source, int from_field, int to_field, char str[])
     char linebuffer[1024];
     int c = 0;
 
-    // max founds //
-    const int _MAX_FOUNDS_ = 200;
-
-    int founds_index[_MAX_FOUNDS_];
-    char founds_str[_MAX_FOUNDS_][100];
+    int founds_index[env_get("MAX_FOUNDS")];
+    char founds_str[env_get("MAX_FOUNDS")][100];
     int k = 0;
 
-    for (int i = 0; i < _MAX_FOUNDS_; i++)
+    for (int i = 0; i < env_get("MAX_FOUNDS"); i++)
     {
         founds_index[i] = -1;
         founds_str[i][0] = '\0';
     }
-    ///////////////
 
     while (fgets(linebuffer, sizeof linebuffer, source) != NULL)
     {
@@ -70,21 +72,24 @@ int csv_scanfor(FILE *source, int from_field, int to_field, char str[])
 
         csv_parsefields(linebuffer, fields, fieldn, 100);
 
-        for (int i = from_field; i < from_field + to_field; i++)
+        for (int i = from_field; i < from_field + to_field && i < fieldn; i++)
         {
             char *fieldcpy = strdup(fields[i]);
             fnc_strtolower(fieldcpy);
 
             if (strstr(fieldcpy, str) != NULL)
             {
-                if (k < _MAX_FOUNDS_)
+                if (k < env_get("MAX_FOUNDS"))
                 {
                     founds_index[k] = c;
                     strcpy(founds_str[k], fields[i]);
                 }
 
                 k++;
+                break; // You might want to reconsider using 'break' depending on your logic.
             }
+
+            free(fieldcpy); // Free dynamically allocated memory.
         }
 
         c++;
@@ -92,7 +97,7 @@ int csv_scanfor(FILE *source, int from_field, int to_field, char str[])
 
     if (1 < k)
     {
-        for (int i = 0; i < _MAX_FOUNDS_; i++)
+        for (int i = 0; i < env_get("MAX_FOUNDS"); i++)
         {
             if (founds_index[i] == -1)
             {
@@ -102,18 +107,109 @@ int csv_scanfor(FILE *source, int from_field, int to_field, char str[])
             char indexingstr[10];
             sprintf(indexingstr, "(%d)", i + 1);
 
-            printf(" %5s %-15s found in line %6d\n", indexingstr, founds_str[i], founds_index[i] + 1);
+            printf(" %5s  %-15s found in line %6d\n", indexingstr, founds_str[i], founds_index[i] + 1);
         }
 
-        if (0 < k - _MAX_FOUNDS_)
+        if (0 < k - env_get("MAX_FOUNDS"))
         {
-            printf(" + %d overflows\n", k - _MAX_FOUNDS_);
+            printf(" + %d overflows (change this in .env at \"MAX_FOUNDS\")\n", k - env_get("MAX_FOUNDS"));
+        }
+
+        printf("\n");
+
+        while (1)
+        {
+            int founds_ = 0;
+            char decision_ = '\0';
+            char _ = '\0';
+
+            printf("Enter a number between 1 and %d: ", k);
+            scanf("%d", &founds_);
+            scanf("%c", &_);
+
+            if (0 < founds_ && founds_ < k + 1)
+            {
+                printf("Select object \"%s\"? (y) ", founds_str[founds_ - 1]);
+                scanf("%c", &decision_);
+
+                if (decision_ == 'y')
+                {
+                    fclose(source);
+                    return founds_index[founds_ - 1] + 1;
+                }
+            }
         }
     }
     else
     {
-        printf(" %s found in line %d\n", founds_str[0], founds_index[0] + 1);
+        if (founds_index[0] == -1)
+        {
+            printf("Not found: \"%s\"\n", str);
+
+            fclose(source);
+            return -1;
+        }
+        else
+        {
+            printf(" %s found in line %d\n", founds_str[0], founds_index[0] + 1);
+
+            fclose(source);
+            return founds_index[0];
+        }
     }
 
+    fclose(source);
     return 0;
+}
+
+char *csv_getat(char filename[], int line, int field)
+{
+    FILE *source;
+    source = fopen(filename, "r");
+
+    if (source == NULL)
+    {
+        printf("Can't access csv source: csv_getat\n");
+        fclose(source);
+        return NULL;
+    }
+
+    char linebuffer[1024];
+    int i = 0;
+
+    while (fgets(linebuffer, sizeof(linebuffer), source) != NULL)
+    {
+        if (line == i)
+        {
+            if (linebuffer[strlen(linebuffer) - 1] == '\n')
+                linebuffer[strlen(linebuffer) - 1] = '\0';
+
+            int fieldn = csv_countfields(linebuffer);
+
+            if (fieldn >= field)
+            {
+                char(*fields)[100] = malloc(fieldn * 100);
+                if (fields == NULL)
+                {
+                    fclose(source);
+                    return NULL;
+                }
+
+                csv_inifields(fields, fieldn);
+                csv_parsefields(linebuffer, fields, fieldn, 100);
+
+                char *result = strdup(fields[field - 1]);
+
+                free(fields);
+
+                fclose(source);
+                return result;
+            }
+        }
+
+        i++;
+    }
+
+    fclose(source);
+    return NULL;
 }

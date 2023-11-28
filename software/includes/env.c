@@ -1,6 +1,10 @@
 //
 // Created by Florian Epple on 28.11.23.
 //
+
+#ifndef ENV_C
+#define ENV_C
+
 #ifdef _WIN32
 #include <Windows.h>
 #elif defined(__APPLE__)
@@ -13,27 +17,56 @@
 
 #include "functionals.c"
 
-char *env_getstr(char *key)
+void env_getfname(char *fname)
 {
-    FILE *envf;
     char cwd[1024];
-    char filename[1024];
 
 #ifdef _WIN32
     if (GetCurrentDirectory(MAX_PATH, cwd) == 0)
     {
-        printf("Error getting current working directory: in env_getstr()");
-        return "";
+        perror("Error getting current working directory");
+        return;
     }
 #elif defined(__APPLE__)
     if (getcwd(cwd, sizeof(cwd)) == NULL)
     {
-        printf("Error getting current working directory: in env_getstr()");
-        return "";
+        perror("Error getting current working directory");
+        return;
     }
 #endif
 
+    char filename[1024];
     sprintf(filename, "%s/%s", cwd, ".env");
+
+    strcpy(fname, filename);
+}
+
+int env_nexits()
+{
+    FILE *envf;
+    char filename[1024];
+
+    env_getfname(filename);
+
+    envf = fopen(filename, "r");
+
+    if (envf == NULL)
+    {
+        fclose(envf);
+        return 1;
+    }
+
+    fclose(envf);
+
+    return 0;
+}
+
+char *env_getstr(char *key)
+{
+    FILE *envf;
+    char filename[1024];
+
+    env_getfname(filename);
 
     envf = fopen(filename, "r");
 
@@ -46,6 +79,9 @@ char *env_getstr(char *key)
 
     while (fgets(buffer, sizeof(buffer), envf) != NULL)
     {
+        if (strstr(buffer, "=") == NULL || strstr(buffer, "#") != NULL)
+            continue;
+
         if (buffer[strlen(buffer) - 1] == '\n')
             buffer[strlen(buffer) - 1] = '\0';
 
@@ -53,13 +89,27 @@ char *env_getstr(char *key)
 
         fnc_strsplitby(buffer, '=', keypair, 2, 100);
 
-        printf("%s equals %s\n", keypair[0], keypair[1]);
+        if (strcmp(fnc_strtrim(keypair[0]), key) == 0)
+        {
+            char *val = fnc_strtrim(keypair[1]);
+
+            fclose(envf);
+            return val;
+        }
     }
 
-    return "0";
+    fclose(envf);
+
+    return NULL;
 }
 
 int env_get(char *key)
 {
-    return atoi(env_getstr(key));
+    if (env_getstr(key) != NULL)
+    {
+        return atoi(env_getstr(key));
+    }
+    return 0;
 }
+
+#endif // ENV_C
