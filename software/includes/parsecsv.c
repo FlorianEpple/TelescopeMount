@@ -120,12 +120,21 @@ int csv_scanfor(char filename[], int from_field, int to_field, char str[])
         while (1)
         {
             int founds_ = 0;
+            char foundschar_[100];
+            foundschar_[0] = '\0';
             char decision_ = '\0';
             char _ = '\0';
 
-            printf(" Enter a number between 1 and %d: ", k);
-            scanf("%d", &founds_);
+            printf(" Enter a number between 1 and %d: (\'*\' for escape) ", k);
+            scanf("%s", foundschar_);
             scanf("%c", &_);
+
+            if (strcmp(fnc_strtrim(foundschar_), "*") == 0)
+            {
+                return -1;
+            }
+
+            founds_ = atoi(foundschar_);
 
             if (0 < founds_ && founds_ < k + 1)
             {
@@ -151,9 +160,18 @@ int csv_scanfor(char filename[], int from_field, int to_field, char str[])
         }
         else
         {
+            char decision_ = 'n';
+
             printf(" %s found in line %d\n", founds_str[0], founds_index[0] + 1);
+            printf("\n");
+            printf(" Select object \"%s\"? (y/n) ", founds_str[0]);
+            scanf("%c", &decision_);
 
             fclose(source);
+
+            if (decision_ != 'y')
+                return -1;
+
             return founds_index[0];
         }
     }
