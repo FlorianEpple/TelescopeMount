@@ -86,7 +86,7 @@ int csv_scanfor(char filename[], int from_field, int to_field, char str[])
                 }
 
                 k++;
-                break; // You might want to reconsider using 'break' depending on your logic.
+                break;
             }
 
             free(fieldcpy); // Free dynamically allocated memory.
@@ -123,13 +123,13 @@ int csv_scanfor(char filename[], int from_field, int to_field, char str[])
             char decision_ = '\0';
             char _ = '\0';
 
-            printf("Enter a number between 1 and %d: ", k);
+            printf(" Enter a number between 1 and %d: ", k);
             scanf("%d", &founds_);
             scanf("%c", &_);
 
             if (0 < founds_ && founds_ < k + 1)
             {
-                printf("Select object \"%s\"? (y) ", founds_str[founds_ - 1]);
+                printf(" Select object \"%s\"? (y/n) ", founds_str[founds_ - 1]);
                 scanf("%c", &decision_);
 
                 if (decision_ == 'y')
