@@ -1,6 +1,6 @@
 #include <stdio.h>
 #ifdef _WIN32
-#include <windows.h>
+#include <Windows.h>
 #elif defined(__APPLE__)
 #include <string.h>
 #include <dirent.h>

@@ -10,7 +10,7 @@
  */
 
 #ifdef _WIN32
-#include <windows.h>
+#include <Windows.h>
 #elif defined(__APPLE__)
 #include <unistd.h>
 #endif
@@ -84,7 +84,7 @@ void parse_coordinates(FILE *file, char *data[MAX_LINES][MAX_FIELDS])
         }
     }
 
-    char line[MAX_LINES];
+    char line[1024];
     char *fields[MAX_FIELDS];
 
     int line_count = 0;
