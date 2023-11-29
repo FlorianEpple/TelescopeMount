@@ -11,6 +11,7 @@
 
 #include <stdio.h>
 #include <time.h>
+#include <stdlib.h>
 
 #include "includes/parsecsv.c"
 #include "includes/env.c"
@@ -57,7 +58,12 @@ int main(int argc, char *argv[])
         if (dateTimeString[strlen(dateTimeString) - 1] == '\n')
             dateTimeString[strlen(dateTimeString) - 1] = '\0';
 
-        printf("\e[1;1H\e[2J"); // clear console
+            // clear console:
+#ifdef _WIN32
+        system("cls");
+#elif defined(__APPLE__)
+        printf("\e[1;1H\e[2J");
+#endif
 
         printf("=================== %s ===================\n", dateTimeString);
         printf("\n");
