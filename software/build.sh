@@ -10,4 +10,4 @@ clear
 
 rm ./soft.out
 
-rm -dr ./soft.out.dSYM/
+rm -dr ./soft.out.dSYM

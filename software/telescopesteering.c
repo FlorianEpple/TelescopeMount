@@ -21,7 +21,10 @@ int main(int argc, char *argv[])
     }
     ////////////////////////////////////////////////////////////////
 
-    char csvfilename[] = "/Users/florianepple/Documents/IT/Papa/TelescopeMount/software/assets/coordinates.csv";
+    char csvfilename[1024];
+    csvfilename[0] = '\0';
+
+    strcpy(csvfilename, env_getstr("CVS_FILEPATH"));
 
     ////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////
@@ -80,10 +83,6 @@ int main(int argc, char *argv[])
             else
             {
                 objindexA = csv_scanfor(csvfilename, env_get("OBJ_COO_DESIGN_START"), env_get("OBJ_COO_DESIGN_START") + env_get("OBJ_COO_DESIGN_LENGTH"), objectnameA);
-
-                if (-1 < objindexA)
-                {
-                }
             }
 
             printf("\n");
@@ -141,59 +140,93 @@ int main(int argc, char *argv[])
             else
             {
                 objindexB = csv_scanfor(csvfilename, env_get("OBJ_COO_DESIGN_START"), env_get("OBJ_COO_DESIGN_START") + env_get("OBJ_COO_DESIGN_LENGTH"), objectnameB);
-
-                if (-1 < objindexB)
-                {
-                }
             }
 
             printf("\n");
         }
 
+        // inizialization of object data
+        double objdataA[2], objdataB[2];
+        for (int i = 0; i < 2; i++)
+        {
+            objdataA[i] = objdataB[i] = 0.0;
+        }
+
+        // allocation of object data
         if (0 < objindexA)
         {
-            printf("For A index:  %d\n", objindexA);
+            char objectrealnA[100];
+            strcpy(objectrealnA, csv_getat(csvfilename, objindexA - 1, env_get("OBJ_COO_DESIGN_START") + 1));
+
+            objdataA[0] = (double)atof(csv_getat(csvfilename, objindexA - 1, env_get("OBJ_COO_RA") + 1));
+            objdataA[1] = (double)atof(csv_getat(csvfilename, objindexA - 1, env_get("OBJ_COO_DELTA") + 1));
+
+            printf("For A existing:  %-9s | RA: %11.6f | Delta: %11.6f\n", objectrealnA, objdataA[0], objdataA[1]);
         }
         else if (objindexA == -2)
         {
-            printf("For A manual: %s\n", manA);
+            char idenmanA[2][100];
+            fnc_strsplitby(manA, ';', idenmanA, 2, 100);
+
+            objdataA[0] = (double)atof(idenmanA[0]);
+            objdataA[1] = (double)atof(idenmanA[1]);
+
+            printf("For A manually: %-9s | RA: %11.6f | Delta: %11.6f\n", "(unknown)", objdataA[0], objdataA[1]);
         }
 
         if (0 < objindexB)
         {
-            printf("For B index:  %d\n", objindexB);
+            char objectrealnB[100];
+            strcpy(objectrealnB, csv_getat(csvfilename, objindexB - 1, env_get("OBJ_COO_DESIGN_START") + 1));
+
+            objdataB[0] = (double)atof(csv_getat(csvfilename, objindexB - 1, env_get("OBJ_COO_RA") + 1));
+            objdataB[1] = (double)atof(csv_getat(csvfilename, objindexB - 1, env_get("OBJ_COO_DELTA") + 1));
+
+            printf("For B existing:  %-9s | RA: %11.6f | Delta: %11.6f\n", objectrealnB, objdataB[0], objdataB[1]);
         }
         else if (objindexB == -2)
         {
-            printf("For B manual: %s\n", manB);
+            char idenmanB[2][100];
+            fnc_strsplitby(manB, ';', idenmanB, 2, 100);
+
+            objdataB[0] = (double)atof(idenmanB[0]);
+            objdataB[1] = (double)atof(idenmanB[1]);
+
+            printf("For B manually: %-9s | RA: %11.6f | Delta: %11.6f\n", "(unknown)", objdataB[0], objdataB[1]);
+        }
+        printf("\n");
+
+        char findecision_ = 'y';
+        while (1)
+        {
+
+            printf("Do you want to use these values? (y/n) ");
+            scanf(" %c", &findecision_);
+
+            if (findecision_ == 'y')
+            {
+                findecision_ = '0';
+                break;
+            }
+
+            printf("Do you really want to throw these values away? (y/n) ");
+            scanf(" %c", &findecision_);
+
+            if (findecision_ == 'y')
+            {
+                findecision_ = '1';
+                break;
+            }
         }
 
-        exit(0);
+        printf("\n");
+
+        if (findecision_ == '0')
+            break;
     }
 
     ////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////
-
-    char obj[] = "m1";
-    int objindex = -1;
-
-    objindex = csv_scanfor(csvfilename, env_get("OBJ_COO_DESIGN_START"), env_get("OBJ_COO_DESIGN_START") + env_get("OBJ_COO_DESIGN_LENGTH"), obj);
-
-    if (objindex == -1)
-    {
-        return 1;
-    }
-
-    char *ra = csv_getat(csvfilename, objindex, env_get("OBJ_COO_RA") + 1);
-    if (ra != NULL)
-    {
-        printf("RA of \"%s\" is %s\n", obj, ra);
-        free(ra);
-    }
-    else
-    {
-        printf("Error retrieving RA for \"%s\"\n", obj);
-    }
 
     return 0;
 }

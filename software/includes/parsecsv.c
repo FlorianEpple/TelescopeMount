@@ -125,7 +125,7 @@ int csv_scanfor(char filename[], int from_field, int to_field, char str[])
             char decision_ = '\0';
             char _ = '\0';
 
-            printf(" Enter a number between 1 and %d: (\'*\' for escape) ", k);
+            printf(" Enter a number between 1 and %d: (\'*\' for escape) ", env_get("MAX_FOUNDS") < k ? env_get("MAX_FOUNDS") : k);
             scanf("%s", foundschar_);
             scanf("%c", &_);
 
