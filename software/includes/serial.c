@@ -22,6 +22,7 @@ int srl_sendstr(const char port[], const char str[], unsigned int baud);
 int srl_sendstr(const char port[], const char str[], unsigned int baud)
 {
     char comPort[100];
+    char strcopy[] = str;
     sprintf(comPort, "\\\\.\\%s", port);
 
     HANDLE hSerial;
@@ -76,10 +77,10 @@ int srl_sendstr(const char port[], const char str[], unsigned int baud)
         return 1;
     }
 
-    strcat(str, "\n");
+    strcat(strcopy, "\n");
 
     DWORD bytesWritten;
-    if (!WriteFile(hSerial, str, strlen(str), &bytesWritten, NULL))
+    if (!WriteFile(hSerial, strcopy, strlen(strcopy), &bytesWritten, NULL))
     {
         perror("\n");
         fprintf(stderr, "Error writing to serial port\n");

@@ -370,7 +370,9 @@ int main(int argc, char *argv[])
 
 #ifdef _WIN32
         if (_kbhit())
+        {
             char ch = _getch();
+        }
 #elif defined(__APPLE__)
         char ch;
 
