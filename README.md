@@ -1,19 +1,6 @@
-# TelescopeMount
+# Lovely welcome to Telescope Mount
 
-A Repo for my father and his telescope mount
+This software is used to to calculate the difference between two star positions and send this to an Arduino, which is supposed to move a telescope according to these differences.
 
----
-
-## Für Papa:
-
-Unter CoordinateParser findest du die main.c, die dir die Koordinaten berechnet
-
-**CoordinateParser**
-
-[Source Code](https://github.com/FlorianEpple/TelescopeMount/tree/main/CoordinateParser/main.c)
-
-**CometAndPlanetFinder**
-
-[Source Code](https://github.com/FlorianEpple/TelescopeMount/blob/main/CometAndPlanetFinder/main.c)
-
-![CometAndPlanetFinder_exe](https://florianepple.de/papa/coordinate_parser/static/CometAndPlanetFinder_exe.png)
+> Software Version:
+> 1.0 Beta
