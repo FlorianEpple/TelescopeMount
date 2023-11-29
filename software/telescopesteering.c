@@ -27,6 +27,10 @@ int main(int argc, char *argv[])
     }
     ////////////////////////////////////////////////////////////////
 
+    // debug
+    printf("CVS_FILEPATH: %s\n", env_getstr("CVS_FILEPATH"));
+    // END debug
+
     char csvfilename[1024];
     csvfilename[0] = '\0';
 
