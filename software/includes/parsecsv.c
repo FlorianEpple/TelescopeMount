@@ -172,7 +172,7 @@ int csv_scanfor(char filename[], int from_field, int to_field, char str[])
             if (decision_ != 'y')
                 return -1;
 
-            return founds_index[0];
+            return founds_index[0] + 1;
         }
     }
 
