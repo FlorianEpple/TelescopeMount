@@ -85,9 +85,9 @@ char *env_getstr(char *key)
         if (buffer[strlen(buffer) - 1] == '\n')
             buffer[strlen(buffer) - 1] = '\0';
 
-        char keypair[2][100];
+        char keypair[2][500];
 
-        fnc_strsplitby(buffer, '=', keypair, 2, 100);
+        fnc_strsplitby(buffer, '=', keypair, 2, 500);
 
         if (strcmp(fnc_strtrim(keypair[0]), key) == 0)
         {
