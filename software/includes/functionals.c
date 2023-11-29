@@ -5,6 +5,11 @@
 #ifndef FUNCTIONALS_C
 #define FUNCTIONALS_C
 
+#if defined(__APPLE__)
+#include <unistd.h>
+#include <termios.h>
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -109,5 +114,35 @@ char *fnc_strtrim(char const *str)
     }
     return (trim);
 }
+
+void fnc_setnonblock(int state);
+
+#ifdef _WIN32
+void fnc_setnonblock(int state) { printf("fnc_setnonblock works only on Apple"); }
+#elif defined(__APPLE__)
+void fnc_setnonblock(int state)
+{
+    struct termios ttystate;
+
+    // Get the terminal state
+    tcgetattr(STDIN_FILENO, &ttystate);
+
+    if (state == 0)
+    {
+        // Set to canonical mode (line-buffered) with blocking input
+        ttystate.c_lflag |= ICANON;
+    }
+    else
+    {
+        // Set to non-canonical mode for non-blocking input
+        ttystate.c_lflag &= ~ICANON;
+        ttystate.c_cc[VMIN] = 0;
+        ttystate.c_cc[VTIME] = 0;
+    }
+
+    // Apply the changes immediately
+    tcsetattr(STDIN_FILENO, TCSANOW, &ttystate);
+}
+#endif
 
 #endif // FUNCTIONALS_C

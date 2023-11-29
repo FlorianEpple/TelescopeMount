@@ -93,6 +93,14 @@ char *env_getstr(char *key)
         {
             char *val = fnc_strtrim(keypair[1]);
 
+            if (val[0] == '\"')
+                val[0] = ' ';
+
+            if (val[strlen(val) - 1] == '\"')
+                val[strlen(val) - 1] = ' ';
+
+            val = fnc_strtrim(val);
+
             fclose(envf);
             return val;
         }

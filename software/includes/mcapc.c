@@ -32,10 +32,10 @@ double mcapc_calcd(float d, float m, float s, int dir)
     return (sign * (d + ((double)m / 60) + (double)s / 3600));
 }
 
-void mcapc_adjdeg(double *deg)
+double mcapc_adjdeg(double deg)
 {
-    int degSign = (*deg > 0) - (*deg < 0);
-    double degAbs = *deg * degSign;
+    int degSign = (deg > 0) - (deg < 0);
+    double degAbs = deg * degSign;
 
     if (degAbs > 180)
     {
@@ -43,7 +43,9 @@ void mcapc_adjdeg(double *deg)
         degAbs -= 180 * factor;
     }
 
-    *deg = degAbs * degSign;
+    deg = degAbs * degSign;
+
+    return deg;
 }
 
 char *mcapc_fromstr(char str[], char format[])
@@ -78,5 +80,7 @@ char *mcapc_fromstr(char str[], char format[])
 
     return output;
 }
+
+double mcapc_calcdiff(double d1, double d2) { return mcapc_adjdeg(d2 - d1); }
 
 #endif // MCAPC_C
