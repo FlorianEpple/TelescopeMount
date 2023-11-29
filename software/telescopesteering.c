@@ -320,23 +320,38 @@ int main(int argc, char *argv[])
 
             sprintf(outputstr, outputformat, radiff, deldiff);
 
-            printf("\n");
-            printf(" Using serial port %s\n", serialport);
-            printf(" Using baud rate   %d\n", baudrate);
-            printf(" Sending string   \"%s\" ...\n", outputstr);
+            while (1)
+            {
+                printf("\n");
+                printf(" Using serial port %s\n", serialport);
+                printf(" Using baud rate   %d\n", baudrate);
+                printf(" Sending string   \"%s\" ...\n", outputstr);
 
-            /*
-             * Send ouput to the arduino
-             */
-            if (srl_sendstr(serialport, outputstr, baudrate) == 0)
-            {
-                printf("\n");
-                printf("The string was sent successfully.\n");
-            }
-            else
-            {
-                printf("\n");
-                printf("Sending canceled.\n");
+                /*
+                 * Send ouput to the arduino
+                 */
+                if (srl_sendstr(serialport, outputstr, baudrate) == 0)
+                {
+                    printf("\n");
+                    printf("The string was sent successfully.\n");
+                    break;
+                }
+                else
+                {
+                    printf("\n");
+                    printf("Sending canceled.\n");
+
+                    char decision_;
+                    printf("Retry sending? (y/n) ");
+                    scanf(" %c", &decision_);
+
+                    if (decision_ != 'y')
+                        break;
+
+                    printf("\n");
+                    printf(" ---");
+                    printf("\n");
+                }
             }
         }
         else
