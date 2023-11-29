@@ -22,7 +22,10 @@ int srl_sendstr(const char port[], const char str[], unsigned int baud);
 int srl_sendstr(const char port[], const char str[], unsigned int baud)
 {
     char comPort[100];
-    char strcopy[] = str;
+    char strcopy[100];
+
+    strcpy(strcopy, str);
+
     sprintf(comPort, "\\\\.\\%s", port);
 
     HANDLE hSerial;

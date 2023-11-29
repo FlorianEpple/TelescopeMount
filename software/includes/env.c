@@ -41,7 +41,7 @@ void env_getfname(char *fname)
     strcpy(fname, filename);
 }
 
-int env_nexits()
+int env_nexists()
 {
     FILE *envf;
     char filename[1024];

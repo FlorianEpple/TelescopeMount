@@ -20,7 +20,7 @@
 int main(int argc, char *argv[])
 {
     ////////////////////////////////////////////////////////////////
-    if (env_nexits())
+    if (env_nexists())
     {
         printf("Environment variables not initialized: Not found .env\n");
         return 1;
