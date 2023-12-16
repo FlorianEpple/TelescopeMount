@@ -22,9 +22,9 @@ int srl_sendstr(const char port[], const char str[], unsigned int baud);
 int srl_sendstr(const char port[], const char str[], unsigned int baud)
 {
     char comPort[100];
-    char strcopy[100];
+    char strcopy[1024];
 
-    strcpy(strcopy, str);
+    sprintf(strcopy, "%s\n", str);
 
     sprintf(comPort, "\\\\.\\%s", port);
 
@@ -80,8 +80,6 @@ int srl_sendstr(const char port[], const char str[], unsigned int baud)
         return 1;
     }
 
-    strcat(strcopy, "\n");
-
     DWORD bytesWritten;
     if (!WriteFile(hSerial, strcopy, strlen(strcopy), &bytesWritten, NULL))
     {
@@ -100,6 +98,9 @@ int srl_sendstr(const char port[], const char str[], unsigned int baud)
 int srl_sendstr(const char port[], const char str[], unsigned int baud)
 {
     int fd = open(port, O_RDWR);
+    char strcopy[1024];
+
+    sprintf(strcopy, "%s\n", str);
 
     if (fd == -1)
     {
@@ -121,7 +122,7 @@ int srl_sendstr(const char port[], const char str[], unsigned int baud)
 
     tcsetattr(fd, TCSANOW, &options);
 
-    write(fd, str, strlen(str));
+    write(fd, strcopy, strlen(strcopy));
 
     close(fd);
 
