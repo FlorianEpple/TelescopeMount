@@ -64,9 +64,9 @@ void createBMP(const char *filename, int height, int width, RGBPixel **pixels)
         for (int x = 0; x < width; x++)
         {
             // Write pixel data
-            fwrite(&pixels[y][x].blue, sizeof(uint8_t), 1, file);  // Blue
-            fwrite(&pixels[y][x].green, sizeof(uint8_t), 1, file); // Green
-            fwrite(&pixels[y][x].red, sizeof(uint8_t), 1, file);   // Red
+            fwrite(&pixels[x][y].blue, sizeof(uint8_t), 1, file);  // Blue
+            fwrite(&pixels[x][y].green, sizeof(uint8_t), 1, file); // Green
+            fwrite(&pixels[x][y].red, sizeof(uint8_t), 1, file);   // Red
         }
 
         // Pad row to multiple of 4 bytes (required by BMP format)
@@ -88,10 +88,12 @@ int maxnum(int arr[], int n)
     return max;
 }
 
-RGBPixel **bitgraph(int data[], int size, int *width, int *height)
+RGBPixel **bitgraph(int data[], int size, int *width, int *height, int max)
 {
     *width = size;
-    *height = maxnum(data, size);
+    *height = max == -1 ? maxnum(data, size) : max;
+
+    printf("height = %d; size = %d\n", (*height), size);
 
     // Allocate memory for the bitmap array
     RGBPixel **bitmap = (RGBPixel **)malloc(sizeof(RGBPixel *) * (*width));
@@ -116,11 +118,18 @@ RGBPixel **bitgraph(int data[], int size, int *width, int *height)
     {
         for (int j = *height; j > 0; j--)
         {
-            if (*height - j < data[i])
+            if (j < data[i])
             {
-                bitmap[i][j - 1].red = 255;   // Set Red component to 255
-                bitmap[i][j - 1].green = 255; // Set Green component to 255
-                bitmap[i][j - 1].blue = 255;  // Set Blue component to 255
+                unsigned char cindex = 0xFF;
+
+                bitmap[i][j - 1].red = cindex;
+                bitmap[i][j - 1].green = cindex;
+                bitmap[i][j - 1].blue = cindex;
+
+                if (data[i] > max)
+                {
+                    bitmap[i][j - 1].green = bitmap[i][j - 1].blue = 0;
+                }
             }
         }
     }

@@ -24,59 +24,103 @@ int main(int argc, char const *argv[])
 
     if (bitmap)
     {
-        // Now you can work with the RGB bitmap as needed
+        printf("width: %d, height: %d\n", width, height);
+        printf("x:%d y:%d\n", uin_x, uin_y);
+
+        ////////////////////////////////////////////////////////////////
 
         RGBPixel hori[width];
         RGBPixel verti[height];
-        int hori_i = 0, verti_i = 0;
 
-        printf("x:%d y:%d\n", uin_x, uin_y);
+        ////////////////////////////////////////////////////////////////
 
-        for (int _y = 1; _y < height + 1; _y++)
+        for (int i = height; i > 0; i--)
         {
-            for (int _x = 1; _x < width + 1; _x++)
+            if (i == uin_y)
             {
-                if (_x == uin_x && hori_i < width)
+                for (int j = 0; j < width; j++)
                 {
-                    hori[hori_i] = bitmap[_x - 1][_y - 1];
-                    hori_i++;
-                }
-
-                if (_y == uin_y && verti_i < height)
-                {
-                    verti[verti_i] = bitmap[_x - 1][_y - 1];
-                    verti_i++;
+                    printf("hori:  x:%3d, y:%d: (%3d %3d %3d)\n", j, i, bitmap[i][j].red, bitmap[i][j].green, bitmap[i][j].blue);
+                    hori[j] = bitmap[i][j];
                 }
             }
         }
 
-        ////////////////////////////////////////////////////////////////
+        printf("\n\n");
 
-        int hori_d[width];
+        ////////////////////////////////////////////////////////////////
 
         for (int i = 0; i < width; i++)
         {
+            if (i == uin_x)
+            {
+                for (int j = 0; j < height; j++)
+                {
+                    printf("verti: x:%d, y:%3d: (%3d %3d %3d)\n", i, j, bitmap[j][i].red, bitmap[j][i].green, bitmap[j][i].blue);
+                    verti[j] = bitmap[j][i];
+                }
+            }
+        }
+
+        printf("\n\n");
+
+        ////////////////////////////////////////////////////////////////
+
+        for (int i = height; i > 0; i--)
+        {
+            for (int j = 0; j < width; j++)
+            {
+                if (i == uin_y || j == uin_x)
+                {
+                    bitmap[j][i].red = 255;
+                    bitmap[j][i].green = bitmap[j][i].blue = 0;
+                }
+            }
+        }
+
+        createBMP("./outp/source.bmp", height, width, bitmap);
+
+        ////////////////////////////////////////////////////////////////
+
+        int hori_d[height];
+
+        for (int i = 0; i < height; i++)
+        {
             hori_d[i] = hori[i].red + hori[i].green + hori[i].blue;
+
+            if (i == uin_y)
+            {
+                hori_d[i] = 255 * 3 + 1; // mark the cursor position
+            }
         }
 
         int h_dw, h_dh, hdn = sizeof(hori_d) / sizeof(hori_d[0]);
 
-        RGBPixel **graph_hori = bitgraph(hori_d, hdn, &h_dw, &h_dh);
+        printf("max in hori: %d\n", maxnum(hori_d, hdn));
+
+        RGBPixel **graph_hori = bitgraph(hori_d, hdn, &h_dw, &h_dh, GRAPH_MAX);
 
         createBMP(OUTPUT_HORI, h_dh, h_dw, graph_hori);
 
         ////////////////////////////////////////////////////////////////
 
-        int verti_d[height];
+        int verti_d[width];
 
-        for (int i = 0; i < height; i++)
+        for (int i = 0; i < width; i++)
         {
             verti_d[i] = verti[i].red + verti[i].green + verti[i].blue;
+
+            if (i == uin_x)
+            {
+                verti_d[i] = 255 * 3 + 1; // mark the cursor position
+            }
         }
 
         int v_dw, v_dh, vdn = sizeof(verti_d) / sizeof(verti_d[0]);
 
-        RGBPixel **graph_verti = bitgraph(verti_d, vdn, &v_dw, &v_dh);
+        printf("max in verti: %d\n", maxnum(verti_d, vdn));
+
+        RGBPixel **graph_verti = bitgraph(verti_d, vdn, &v_dw, &v_dh, GRAPH_MAX);
 
         createBMP(OUTPUT_VERTI, v_dh, v_dw, graph_verti);
 

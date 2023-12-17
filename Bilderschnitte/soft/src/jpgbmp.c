@@ -26,10 +26,10 @@ RGBPixel **loadJPEGImage(const char *filename, int *width, int *height)
     *height = FreeImage_GetHeight(image);
 
     // Allocate memory for the bitmap
-    RGBPixel **bitmap = (RGBPixel **)malloc(*width * sizeof(RGBPixel *));
-    for (int i = 0; i < *width; i++)
+    RGBPixel **bitmap = (RGBPixel **)malloc(*height * sizeof(RGBPixel *));
+    for (int i = 0; i < *height; i++)
     {
-        bitmap[i] = (RGBPixel *)malloc(*height * sizeof(RGBPixel));
+        bitmap[i] = (RGBPixel *)malloc(*width * sizeof(RGBPixel));
     }
 
     // Convert image to RGB bitmap
